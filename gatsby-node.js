@@ -12,14 +12,15 @@ exports.createPages = ({ graphql, actions }) => {
       graphql(
         `
           {
-            allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }, limit: 1000) {
+            allSanityParts {
               edges {
                 node {
-                  fields {
-                    slug
-                  }
-                  frontmatter {
+                  slug
+                  title
+                  acts {
+                    _id
                     title
+                    body_toString
                   }
                 }
               }
@@ -33,17 +34,17 @@ exports.createPages = ({ graphql, actions }) => {
         }
 
         // Create blog posts pages.
-        const posts = result.data.allMarkdownRemark.edges;
+        const posts = result.data.allSanityParts.edges;
 
         _.each(posts, (post, index) => {
           const previous = index === posts.length - 1 ? null : posts[index + 1].node;
           const next = index === 0 ? null : posts[index - 1].node;
 
           createPage({
-            path: post.node.fields.slug,
+            path: post.node.slug,
             component: blogPost,
             context: {
-              slug: post.node.fields.slug,
+              slug: post.node.slug,
               previous,
               next,
             },

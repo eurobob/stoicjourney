@@ -15,26 +15,31 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-transformer-remark`,
+      resolve: 'gatsby-source-sanity',
       options: {
-        plugins: [
+        projectId: 'ivqjcx4s',
+        stringifyPattern: '_toString',
+        queries: [
           {
-            resolve: `gatsby-remark-images`,
-            options: {
-              maxWidth: 590,
-            },
-          },
-          {
-            resolve: `gatsby-remark-responsive-iframe`,
-            options: {
-              wrapperStyle: `margin-bottom: 1.0725rem`,
-            },
-          },
-          'gatsby-remark-prismjs',
-          'gatsby-remark-copy-linked-files',
-          'gatsby-remark-smartypants',
-        ],
-      },
+            name: 'parts',
+            groq: `
+              *[_type == 'part']{
+                _id,
+                _createdAt,
+                title,
+                "body_toString": body,
+                'slug': slug.current,
+                'acts': acts[]->{
+                  _id,
+                  _createdAt,
+                  title,
+                  "body_toString": body
+                }
+              }
+            `,
+          }
+        ]
+      }
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
@@ -59,11 +64,5 @@ module.exports = {
     },
     `gatsby-plugin-offline`,
     `gatsby-plugin-react-helmet`,
-    {
-      resolve: 'gatsby-plugin-typography',
-      options: {
-        pathToConfigModule: 'src/utils/typography',
-      },
-    },
   ],
 }
